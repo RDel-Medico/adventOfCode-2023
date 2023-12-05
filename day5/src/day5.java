@@ -5,15 +5,15 @@ import java.io.IOException;
 public class day5 {
 
     public static long convert (long initial, long[][] map) {
-        long converted = initial;
-
         for (int i = 0; i < map.length; i++) {
-            if (initial >= map[i][1] && initial < map[i][1] + map[i][2]) {
-                converted = map[i][0] + (initial - map[i][1]);
+            long[] m = map[i];
+            long start = m[1];
+            if (initial >= start && initial < start + m[2]) {
+                return m[0] + (initial - start);
             }
         }
 
-        return converted;
+        return initial;
     }
     public static void main(String[] args) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("./src/input.txt"))) {
@@ -47,8 +47,9 @@ public class day5 {
 
             for (int i = 0; i < seeds.length; i+=2) {
                 long seedMin = Long.MAX_VALUE;
-                for (int j = 0; j < seeds[i+1]; j++) {
-                    long tempConversion = seeds[i]+j;
+                long seedMax = seeds[i] + seeds[i+1];
+                for (long j = seeds[i]; j < seedMax; j++) {
+                    long tempConversion = j;
                     for (int k = 0; k < 7; k++) {
                         tempConversion = convert(tempConversion, map[k]);
                     }
@@ -56,7 +57,8 @@ public class day5 {
                         seedMin = tempConversion;
                     }
                 }
-                System.out.println("Seed finis");
+
+                System.out.println("Seed " + i + " finit");
                 seeds[i] = seedMin;
                 seeds[i+1] = Long.MAX_VALUE;
             }
