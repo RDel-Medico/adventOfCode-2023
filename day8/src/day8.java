@@ -26,13 +26,8 @@ public class day8 {
         long ppcm = 0;
         long biggest;
 
-        if (a > b) {
-            ppcm = a;
-            biggest = a;
-        } else {
-            ppcm = b;
-            biggest = b;
-        }
+        ppcm = a > b ? a : b;
+        biggest = a > b ? a : b;
 
         while(true) {
             if (ppcm%a == 0 && ppcm%b == 0) {
@@ -44,13 +39,13 @@ public class day8 {
     }
 
     public static long ppcm (int [] numbers) {
-        long res = numbers[0];
+        long ppcm = numbers[0];
 
         for (int i = 1; i < numbers.length; i++) {
-            res = ppcm(res, numbers[i]);
+            ppcm = ppcm(ppcm, numbers[i]);
         }
 
-        return res;
+        return ppcm;
     }
 
     public static void main(String[] args) throws IOException {
@@ -92,7 +87,7 @@ public class day8 {
             }
 
             boolean allLoopFound = false;
-            while (!allEndZ(currentStates) && !allLoopFound) {
+            while (!allLoopFound) {
                 for (int i = 0; i < currentStates.length; i++) {
                     indexNodes[i] = getNodeIndex(currentStates[i], nodes);
                 }
@@ -109,10 +104,9 @@ public class day8 {
 
                 allLoopFound = true;
                 for (int i = 0; i < loopTime.length; i++) {
-                    if (currentStates[i].endsWith("Z") && loopTime[i] == 0) {
+                    if (loopTime[i] == 0 && currentStates[i].endsWith("Z")) {
                         loopTime[i] = res + 1;
-                    }
-                    if (loopTime[i] == 0) {
+                    } else if (loopTime[i] == 0) {
                         allLoopFound = false;
                     }
                 }
@@ -120,7 +114,6 @@ public class day8 {
 
                 res++;
             }
-
             System.out.println("Res : " + ppcm(loopTime));
         }
     }
