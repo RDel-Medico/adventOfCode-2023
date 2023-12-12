@@ -4,54 +4,54 @@ import java.io.IOException;
 
 public class day10 {
 
-    public static int[] getConnected (String[] field, int x, int y, int prevX, int prevY) {
+    public static int[] getConnected(String[] field, int x, int y, int prevX, int prevY) {
         switch (field[y].charAt(x)) {
             case '|':
-                if (y+1 == prevY) {
-                    int [] res = {x, y-1};
+                if (y + 1 == prevY) {
+                    int[] res = { x, y - 1 };
                     return res;
                 } else {
-                    int [] res = {x, y+1};
+                    int[] res = { x, y + 1 };
                     return res;
                 }
             case '-':
-                if (x+1 == prevX) {
-                    int [] res = {x-1, y};
+                if (x + 1 == prevX) {
+                    int[] res = { x - 1, y };
                     return res;
                 } else {
-                    int [] res = {x+1, y};
+                    int[] res = { x + 1, y };
                     return res;
                 }
             case 'L':
-                if (y-1 == prevY) {
-                    int [] res = {x+1, y};
+                if (y - 1 == prevY) {
+                    int[] res = { x + 1, y };
                     return res;
                 } else {
-                    int [] res = {x, y-1};
+                    int[] res = { x, y - 1 };
                     return res;
                 }
             case 'J':
-                if (y-1 == prevY) {
-                    int [] res = {x-1, y};
+                if (y - 1 == prevY) {
+                    int[] res = { x - 1, y };
                     return res;
                 } else {
-                    int [] res = {x, y-1};
+                    int[] res = { x, y - 1 };
                     return res;
                 }
             case '7':
-                if (y+1 == prevY) {
-                    int [] res = {x-1, y};
+                if (y + 1 == prevY) {
+                    int[] res = { x - 1, y };
                     return res;
                 } else {
-                    int [] res = {x, y+1};
+                    int[] res = { x, y + 1 };
                     return res;
                 }
             case 'F':
-                    if (y+1 == prevY) {
-                    int [] res = {x+1, y};
+                if (y + 1 == prevY) {
+                    int[] res = { x + 1, y };
                     return res;
                 } else {
-                    int [] res = {x, y+1};
+                    int[] res = { x, y + 1 };
                     return res;
                 }
             default:
@@ -59,17 +59,18 @@ public class day10 {
         }
     }
 
-    public static int[] getConnected(String[] field, int x1, int y1, int prevX1, int prevY1, int x2, int y2, int prevX2, int prevY2) {
-        int [] p1 = getConnected(field, x1, y1, prevX1, prevY1);
-        int [] p2 = getConnected(field, x2, y2, prevX2, prevY2);
+    public static int[] getConnected(String[] field, int x1, int y1, int prevX1, int prevY1, int x2, int y2, int prevX2,
+            int prevY2) {
+        int[] p1 = getConnected(field, x1, y1, prevX1, prevY1);
+        int[] p2 = getConnected(field, x2, y2, prevX2, prevY2);
 
         if (p1[0] == p2[0] && p1[1] == p2[1]) {
-            int[] res = {p1[0], p1[1]};
+            int[] res = { p1[0], p1[1] };
             return res;
         } else if (p1[0] == x2 && p1[1] == y2) {
             return new int[0];
         } else {
-            int[] res = {p1[0], p1[1], p2[0], p2[1]};
+            int[] res = { p1[0], p1[1], p2[0], p2[1] };
             return res;
         }
     }
@@ -87,7 +88,7 @@ public class day10 {
             }
 
             for (int i = 0; i < field.length; i++) {
-                fieldDistance[i] = new int [field[i].length()];
+                fieldDistance[i] = new int[field[i].length()];
                 for (int j = 0; j < field[i].length(); j++) {
                     fieldDistance[i][j] = -1;
                 }
@@ -133,8 +134,8 @@ public class day10 {
                 y2 = connected[3];
                 fieldDistance[y1][x1] = distance;
                 fieldDistance[y2][x2] = distance;
-                     
-                connected = getConnected (field, x1, y1, prevX1, prevY1, x2, y2, prevX2, prevY2);
+
+                connected = getConnected(field, x1, y1, prevX1, prevY1, x2, y2, prevX2, prevY2);
             }
 
             if (connected.length == 2) {
@@ -142,14 +143,44 @@ public class day10 {
                 fieldDistance[connected[1]][connected[0]] = distance;
             }
 
+            boolean inside = false;
+            int nbInside = 0;
+            char prev;
             for (int i = 0; i < fieldDistance.length; i++) {
+                inside = false;
+                prev = 'r';
                 for (int j = 0; j < fieldDistance[i].length; j++) {
+                    if (fieldDistance[i][j] != -1) { // Sur du chemin
+                        if (field[i].charAt(j) == '|') {
+                            inside = !inside;
+                        } else if (field[i].charAt(j) == '7') {
+                            if (prev == 'L' || prev == 'S') {
+                                inside = !inside;
+                                prev = 'r';
+                            }
+                        } else if (field[i].charAt(j) == 'J') {
+                            if (prev == 'F') {
+                                inside = !inside;
+                                prev = 'r';
+                            }
+                        } else if (field[i].charAt(j) == 'L' || field[i].charAt(j) == 'F' || field[i].charAt(j) == 'S') {
+                            prev = field[i].charAt(j);
+                        }
+                        fieldDistance[i][j] = 0;
+                    } else {
+                        if (inside) {
+                            nbInside++;
+                            fieldDistance[i][j] = 1;
+                        } else {
+                            fieldDistance[i][j] = 0;
+                        }
+                    }
                     System.out.print(fieldDistance[i][j]);
+                    //System.out.print(field[i].charAt(j));
                 }
                 System.out.println();
             }
-
-            System.out.println(distance);
+            System.out.println(nbInside);
         }
     }
 }
